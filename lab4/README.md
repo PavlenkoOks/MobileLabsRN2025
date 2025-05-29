@@ -8,13 +8,13 @@
 ![2](screenshots/Screenshot_2.png)
 ![3](screenshots/Screenshot_3.png)
 
-# Також працюэ в браузері
+# Також працює в браузері
 
 ![4](screenshots/Screenshot_4.png)
 
 # Історія комітів
 
-![5](screenshots/Screenshot_4.png)
+![5](screenshots/Screenshot_5.png)
 
 ### Як запустити
 
