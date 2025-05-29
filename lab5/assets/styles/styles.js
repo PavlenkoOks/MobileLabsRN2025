@@ -50,6 +50,10 @@ const typography = {
 }
 
 const styles = StyleSheet.create({
+  link: {
+    marginTop: 15,
+    paddingVertical: 15,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background
