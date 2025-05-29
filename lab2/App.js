@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StoreScreen from './screens/StoreScreen';
 import CommunityScreen from './screens/CommunityScreen';
+import ChatScreen from './screens/ChatScreen';
 import SafetyScreen from './screens/SafetyScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +24,7 @@ function MainApp() {
             let iconName;
             if (route.name === 'Магазин') iconName = 'bag';
             if (route.name === 'Спільнота') iconName = 'people';
+            if (route.name === 'Чати') iconName = 'chatbox-ellipses';
             if (route.name === 'Безпека') iconName = 'shield';
             if (route.name === 'Профіль') iconName = 'man';
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -43,6 +45,7 @@ function MainApp() {
       >
         <Tab.Screen name="Магазин" component={StoreScreen} />
         <Tab.Screen name="Спільнота" component={CommunityScreen} />
+        <Tab.Screen name="Чати" component={ChatScreen} />
         <Tab.Screen name="Безпека" component={SafetyScreen} />
         <Tab.Screen name="Профіль" component={ProfileScreen} />
       </Tab.Navigator>
