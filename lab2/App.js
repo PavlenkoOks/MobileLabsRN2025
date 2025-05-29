@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StoreScreen from './screens/StoreScreen';
 import CommunityScreen from './screens/CommunityScreen';
+import SafetyScreen from './screens/SafetyScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -15,13 +16,14 @@ function MainApp() {
 
   return (
     <NavigationContainer theme={theme}>
-      <StatusBar style={theme.dark ? 'light' : 'dark'} backgroundColor={theme.colors.card} />
+      <StatusBar style={theme.dark ? 'light' : 'dark'} backgroundColor={theme.colors.background} />
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName;
             if (route.name === 'Магазин') iconName = 'bag';
             if (route.name === 'Спільнота') iconName = 'people';
+            if (route.name === 'Безпека') iconName = 'shield';
             if (route.name === 'Профіль') iconName = 'man';
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -41,6 +43,7 @@ function MainApp() {
       >
         <Tab.Screen name="Магазин" component={StoreScreen} />
         <Tab.Screen name="Спільнота" component={CommunityScreen} />
+        <Tab.Screen name="Безпека" component={SafetyScreen} />
         <Tab.Screen name="Профіль" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
