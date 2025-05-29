@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import HomeScreen from '../screens/HomeScreen';
+import TasksScreen from '../screens/TasksScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,11 @@ const AppNavigation = () => {
           name="Home"
           component={HomeScreen}
           options={{title: 'Clicker Game (Pavlenko)'}}
+        />
+        <Stack.Screen
+          name="Tasks"
+          component={TasksScreen}
+          options={{title: 'Tasks'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
