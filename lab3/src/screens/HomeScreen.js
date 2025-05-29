@@ -3,12 +3,19 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import {
   TapGestureHandler,
   LongPressGestureHandler,
+  PanGestureHandler,
+  FlingGestureHandler,
+  PinchGestureHandler,
   State,
+  Directions,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import Animated, {
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
+  runOnJS,
 } from 'react-native-reanimated';
 import ClickableObject from '../components/ClickableObject';
 import styles from '../../assets/styles/styles';
@@ -17,6 +24,10 @@ const GestureButtons = ({ gestureMode, setGestureMode }) => {
   const buttons = [
     { mode: 'tap', label: 'Tap' },
     { mode: 'longPress', label: 'Hold' },
+    { mode: 'pan', label: 'Drag' },
+    { mode: 'pinch', label: 'Pinch' },
+    { mode: 'flingRight', label: 'Swipe R' },
+    { mode: 'flingLeft', label: 'Swipe L' },
   ];
 
   return (
@@ -44,7 +55,7 @@ const GestureHandlerSwitcher = ({
   handlers,
 }) => {
   const { singleTapRef, doubleTapRef, longPressRef } = refs;
-  const { onSingleTap, onDoubleTap, onLongPress } = handlers;
+  const { onSingleTap, onDoubleTap, onLongPress, panHandler, pinchHandler, onFlingRight, onFlingLeft } = handlers;
 
   const imageUrl = "https://media.sketchfab.com/models/efc313bb4fc7434aa61b5b729e774189/thumbnails/5d3feff71f604f80ab4aaa7e6c840882/d56f0d5668e44237b82da7c62a3db624.jpeg";
 
@@ -89,28 +100,42 @@ const GestureHandlerSwitcher = ({
           {renderClickableObject("Hold me for 3s!")}
         </LongPressGestureHandler>
       );
-    default:
+    case 'pan':
       return (
-        <TapGestureHandler
-          ref={singleTapRef}
-          waitFor={doubleTapRef}
+        <PanGestureHandler onGestureEvent={panHandler}>
+          {renderClickableObject("Drag me!")}
+        </PanGestureHandler>
+      );
+    case 'pinch':
+      return (
+        <PinchGestureHandler onGestureEvent={pinchHandler}>
+          {renderClickableObject("Pinch me!")}
+        </PinchGestureHandler>
+      );
+    case 'flingRight':
+      return (
+        <FlingGestureHandler
+          direction={Directions.RIGHT}
           onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE) onSingleTap();
+            if (nativeEvent.state === State.ACTIVE) onFlingRight();
           }}
         >
-          <Animated.View>
-            <TapGestureHandler
-              ref={doubleTapRef}
-              numberOfTaps={2}
-              onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) onDoubleTap();
-              }}
-            >
-              {renderClickableObject("Select 'Tap' or 'Hold'!")}
-            </TapGestureHandler>
-          </Animated.View>
-        </TapGestureHandler>
+          {renderClickableObject("Swipe Right!")}
+        </FlingGestureHandler>
       );
+    case 'flingLeft':
+      return (
+        <FlingGestureHandler
+          direction={Directions.LEFT}
+          onHandlerStateChange={({ nativeEvent }) => {
+            if (nativeEvent.state === State.ACTIVE) onFlingLeft();
+          }}
+        >
+          {renderClickableObject("Swipe Left!")}
+        </FlingGestureHandler>
+      );
+    default:
+      return renderClickableObject("Select gesture!");
   }
 };
 
@@ -121,6 +146,10 @@ const HomeScreen = ({ navigation }) => {
   const [clicks, setClicks] = useState(0);
   const [doubleTaps, setDoubleTaps] = useState(0);
   const [longPressCount, setLongPressCount] = useState(0);
+  const [panned, setPanned] = useState(false);
+  const [flingRightTriggered, setFlingRightTriggered] = useState(false);
+  const [flingLeftTriggered, setFlingLeftTriggered] = useState(false);
+  const [pinched, setPinched] = useState(false);
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -148,12 +177,52 @@ const HomeScreen = ({ navigation }) => {
     setLastGesture('Long Press (+5)');
   }, []);
 
+  const handleFlingRight = useCallback(() => {
+    const points = Math.floor(Math.random() * 10) + 1;
+    setScore(prevScore => prevScore + points);
+    setFlingRightTriggered(true);
+    setLastGesture(`Fling Right (+${points})`);
+  }, []);
+
+  const handleFlingLeft = useCallback(() => {
+    const points = Math.floor(Math.random() * 10) + 1;
+    setScore(prevScore => prevScore + points);
+    setFlingLeftTriggered(true);
+    setLastGesture(`Fling Left (+${points})`);
+  }, []);
+
+  const panGestureHandler = useAnimatedGestureHandler({
+    onStart: (_, ctx) => {
+      ctx.startX = translateX.value;
+      ctx.startY = translateY.value;
+    },
+    onActive: (event, ctx) => {
+      translateX.value = ctx.startX + event.translationX;
+      translateY.value = ctx.startY + event.translationY;
+    },
+    onEnd: () => {
+      runOnJS(setLastGesture)('Pan Gesture');
+      runOnJS(setPanned)(true);
+    },
+  });
+
+  const pinchGestureHandler = useAnimatedGestureHandler({
+    onActive: event => {
+      scale.value = event.scale;
+    },
+    onEnd: () => {
+      scale.value = withSpring(1);
+      runOnJS(setLastGesture)('Pinch Gesture (+3)');
+      runOnJS(setScore)(prevScore => prevScore + 3);
+      runOnJS(setPinched)(true);
+    },
+  });
 
   const animatedClickableStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
-      { translateY: translateY.value }, 
-      { scale: scale.value },           
+      { translateY: translateY.value },
+      { scale: scale.value },
     ],
   }));
 
@@ -163,10 +232,10 @@ const HomeScreen = ({ navigation }) => {
       clicks,
       doubleTaps,
       longPress: longPressCount,
-      panned: false,
-      flingRight: false,
-      flingLeft: false,
-      pinched: false,
+      panned,
+      flingRight: flingRightTriggered,
+      flingLeft: flingLeftTriggered,
+      pinched,
     });
   }, [
     navigation,
@@ -174,6 +243,10 @@ const HomeScreen = ({ navigation }) => {
     clicks,
     doubleTaps,
     longPressCount,
+    panned,
+    flingRightTriggered,
+    flingLeftTriggered,
+    pinched,
   ]);
 
   return (
@@ -193,6 +266,10 @@ const HomeScreen = ({ navigation }) => {
           onSingleTap: handleSingleTap,
           onDoubleTap: handleDoubleTap,
           onLongPress: handleLongPress,
+          panHandler: panGestureHandler,
+          pinchHandler: pinchGestureHandler,
+          onFlingRight: handleFlingRight,
+          onFlingLeft: handleFlingLeft,
         }}
       />
 
