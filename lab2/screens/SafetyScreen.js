@@ -5,11 +5,7 @@ import AnimatedProgressBar from '../components/guardComponents/AnimatedProgressB
 import { useTheme } from '@react-navigation/native';
 import sampleTabsStyles from '../styles/sampleTabsStyles';
 import getSafetyStyles from '../styles/safetyStyles';
-
-export const TABS = [
-  { key: 'guard', label: 'Захист' },
-  { key: 'confirm', label: 'Підтвердження' }
-];
+import { TABS } from '../data/safetyTabs';
 
 const CODE_LENGTH = 5;
 const INTERVAL = 30;
