@@ -1,0 +1,86 @@
+import React, { useState, useCallback } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import BannerSlider from '../components/storeComponents/BannerSlider';
+import GameItem from '../components/storeComponents/GameItem';
+import getStoreStyles from '../styles/storeStyles';
+import getTabsStyles from '../styles/tabsStyles';
+import { useTheme } from '@react-navigation/native';
+import Tabs from '../components/Tabs';
+
+export const GAMES = [
+  { id: '1', title: 'Cyberpunk 2077', price: 29, oldPrice: 59, discount: 51, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg?t=1708681534' },
+  { id: '2', title: 'Palworld', price: 20, platform: 'Windows, Xbox Series X/S', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1621000/header.jpg?t=1710931215' },
+  { id: '3', title: 'Hades II', price: 29, platform: 'Windows', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145350/header.jpg?t=1715014389' },
+  { id: '4', title: 'Grand Theft Auto VI', price: 69, platform: 'PS5, Xbox Series X/S', image: 'https://upload.wikimedia.org/wikipedia/ru/d/dd/Grand_Theft_Auto_IV.jpg' },
+  { id: '5', title: 'Helldivers 2', price: 39, platform: 'Windows, PS5', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/553850/header.jpg?t=1716301383' },
+  { id: '6', title: 'Stardew Valley', price: 14, platform: 'Windows, Mac, Linux, PS4, Xbox One, Switch', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg?t=1695764049' },
+  { id: '7', title: 'Baldur\'s Gate 3', price: 59, oldPrice: 69, discount: 15, platform: 'Windows, PS5, Xbox Series X/S, Mac', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg?t=1701389886' },
+  { id: '8', title: 'Destiny 2: The Final Shape', price: 49, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1945530/header.jpg?t=1716492323' },
+  { id: '9', title: 'The Witcher 3: Wild Hunt', price: 19, oldPrice: 39, discount: 51, platform: 'Windows, PS4, Xbox One, Switch', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg?t=1699960241' },
+  { id: '10', title: 'Among Us', price: 3, platform: 'Windows, Mobile, Switch', image: 'https://upload.wikimedia.org/wikipedia/ru/8/84/Among_Us.png' },
+  { id: '11', title: 'V Rising', price: 10, oldPrice: 19, discount: 47, platform: 'Windows', image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1604030/afe584440ed83dc3c6756ea701a3df1573acc54e/capsule_616x353.jpg?t=1743080421' },
+  { id: '12', title: 'Elden Ring: Shadow of the Erdtree', price: 39, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2635220/header.jpg?t=1712497675' },
+  { id: '13', title: 'DOOM: The Dark Ages', price: 59, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://image.api.playstation.com/vulcan/ap/rnd/202501/1405/5a9411754439a02d29f43dc71e6a5a953a087111c863d381.png' },
+  { id: '14', title: 'Monster Hunter Wilds', price: 59, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://image.api.playstation.com/vulcan/ap/rnd/202409/0506/aa5c40ba185302dfcc88edc276a876fdc6c516c4db07ec9d.png' },
+  { id: '15', title: 'Assassin’s Creed Shadows', price: 60, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3159330/23a251b5d30c761ebd5c2583f570cf19334a80b0/capsule_616x353.jpg?t=1742705129' }, 
+  { id: '16', title: 'Clair Obscur: Expedition 33', price: 50, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://image.api.playstation.com/vulcan/ap/rnd/202501/2217/15dd9f9368aa87c9b2dcaf58e1856e8cca01b6e595331858.jpg' }, 
+  { id: '17', title: 'Blue Prince', price: 25, platform: 'Windows', image: 'https://image.api.playstation.com/vulcan/ap/rnd/202502/1222/459d8cee0d0720f305120da130a06b462550883bb8b9ea7c.jpg' }, 
+  { id: '18', title: 'Atomfall', price: 40, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/801800/90d302bd4bac575300dfa4bcae7531ee1af285c7/capsule_616x353.jpg?t=1745399728' },
+  { id: '19', title: 'Revenge of the Savage Planet', price: 30, platform: 'Windows, PS5, Xbox Series X/S', image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2787320/capsule_616x353.jpg?t=1746444204' }, 
+  { id: '20', title: 'Silent Hill 2 Remake', price: 60, platform: 'Windows, PS5', image: 'https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2124490/header.jpg?t=1744248682' }, 
+];
+
+export const TABS = [
+  { key: 'all', label: 'Всі' },
+  { key: 'new', label: 'Нові' },
+  { key: 'popular', label: 'Популярні' },
+  { key: 'discount', label: 'Знижки' }
+];
+
+const StoreScreen = () => {
+  const { colors } = useTheme();
+  const styles = getStoreStyles(colors);
+  const tabsStyles = getTabsStyles(colors);
+  const [games, setGames] = useState(GAMES);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const fetchMoreGames = () => {
+    return GAMES.map(game => ({
+      ...game,
+      id: game.id + '-p' + (page + 1),
+    }));
+  };
+
+  const loadMore = useCallback(() => {
+    if (loading) return;
+    setLoading(true);
+    setTimeout(() => {
+      const moreGames = fetchMoreGames();
+      setGames(prev => [...prev, ...moreGames]);
+      setPage(prev => prev + 1);
+      setLoading(false);
+    }, 1000);
+  }, [loading, page]);
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={games}
+        renderItem={({ item }) => <GameItem item={item} styles={styles} />}
+        keyExtractor={item => item.id}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
+        ListHeaderComponent={
+          <View>
+            <BannerSlider games={games} styles={styles} />
+            <Tabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} styles={tabsStyles} />
+          </View>
+        }
+      />
+    </View>
+  );
+};
+
+export default StoreScreen;
