@@ -1,42 +1,44 @@
-import { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../assets/styles/style';
+import CustomTextInput from './CustomTextInput';
 
 export default function TaskInputForm({ onAddTask }) {
   const [text, setText] = useState('');
   const [description, setDescription] = useState('');
   const [time, setTime] = useState('');
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     onAddTask(text, description, time);
     setText('');
     setDescription('');
     setTime('');
-  };
+  }, [text, description, time, onAddTask]);
 
   return (
     <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter task"
+      <CustomTextInput
+        placeholder="Введіть завдання"
         value={text}
         onChangeText={setText}
       />
-      <TextInput
-        style={[styles.input, styles.descriptionInput]}
-        placeholder="Enter task description"
+      <CustomTextInput
+        placeholder="Введіть опис завдання"
         value={description}
         onChangeText={setDescription}
         multiline
+        style={styles.descriptionInput}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Reminder time (YYYY-MM-DD HH:mm)"
+      <CustomTextInput
+        placeholder="Час нагадування (РРРР-ММ-ДД ГГ:ХХ)"
         value={time}
         onChangeText={setTime}
+        keyboardType="datetime"
       />
-      <Button title="Add Task" onPress={handleAdd} />
+      
+      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+        <Text style={styles.addButtonText}>Додати Завдання</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
