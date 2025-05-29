@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-export default function NewsItem({ title, date, text }) {
+export default function NewsItem({ title, date, text, src }) {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s' }}
+        source={{ uri: src }}
         style={styles.image}
       />
       <View style={styles.textContainer}>

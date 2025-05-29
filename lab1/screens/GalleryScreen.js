@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
+import Footer from "../components/Footer"
 
 const data = Array(8).fill({});
 
@@ -13,18 +14,19 @@ export default function GalleryScreen() {
         renderItem={() => <View style={styles.box} />}
         contentContainerStyle={styles.container}
       />
+      <Footer />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     padding: 10,
   },
   box: {
-    backgroundColor: '#FFFFFF', // White
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#EEEEEE',     // Light grey
+    borderColor: '#EEEEEE',
     width: 150,
     height: 100,
     margin: 8,
