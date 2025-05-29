@@ -12,6 +12,7 @@ import { useLocalSearchParams, router } from "expo-router"
 import { formatBytes, getFileIcon, getFileType } from "../utils/fileHelper"
 import { ThemedText } from "../../components/ThemedText"
 import { ThemedView } from "../../components/ThemedView"
+import styles from "../../assets/styles/styles"
 
 export default function FolderScreen() {
 	const { path: encodedPath, name } = useLocalSearchParams()
@@ -190,45 +191,45 @@ export default function FolderScreen() {
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
-			
+			style={styles.item}
 			onPress={() => handlePress(item)}
 			onLongPress={() => showOptions(item)}
 		>
-			<ThemedView>
+			<ThemedView style={styles.iconContainer}>
 				<Ionicons
 					name={item.isDirectory ? "folder" : getFileIcon(item.name)}
 					size={24}
 					color={item.isDirectory ? "#FFD700" : "#2196F3"}
 				/>
 			</ThemedView>
-			<ThemedView>
-				<ThemedText type="body" >{item.name}</ThemedText>
-				<ThemedText type="body" >
+			<ThemedView style={styles.itemDetails}>
+				<ThemedText type="body" style={styles.itemName}>{item.name}</ThemedText>
+				<ThemedText type="body" style={styles.itemInfo}>
 					{item.isDirectory ? "Папка" : getFileType(item.name)} • {formatBytes(item.size)}
 				</ThemedText>
 			</ThemedView>
-			<TouchableOpacity  onPress={() => showOptions(item)}>
+			<TouchableOpacity style={styles.moreButton} onPress={() => showOptions(item)}>
 				<Ionicons name="ellipsis-vertical" size={20} color="#777" />
 			</TouchableOpacity>
 		</TouchableOpacity>
 	)
 
 	return (
-		<ThemedView >
-			<ThemedView >
-				<TouchableOpacity  onPress={goUp}>
+		<ThemedView style={styles.container}>
+			<ThemedView style={styles.pathContainer}>
+				<TouchableOpacity style={styles.upButton} onPress={goUp}>
 					<Ionicons name="arrow-up" size={20} color="#2196F3" />
-					<ThemedText type="body" >Вгору</ThemedText>
+					<ThemedText type="body" style={styles.upButtonText}>Вгору</ThemedText>
 				</TouchableOpacity>
-				<ThemedText type="body"  numberOfLines={1} ellipsizeMode="middle">
+				<ThemedText type="body" style={styles.pathText} numberOfLines={1} ellipsizeMode="middle">
 					{path.replace(FileSystem.documentDirectory, "")}
 				</ThemedText>
 			</ThemedView>
 
 			{items.length === 0 && !loading ? (
-				<ThemedView >
+				<ThemedView style={styles.emptyContainer}>
 					<Ionicons name="folder-open" size={64} color="#ccc" />
-					<ThemedText type="body" >Ця папка порожня</ThemedText>
+					<ThemedText type="body" style={styles.emptyText}>Ця папка порожня</ThemedText>
 				</ThemedView>
 			) : (
 				<FlatList
@@ -240,14 +241,14 @@ export default function FolderScreen() {
 				/>
 			)}
 
-			<ThemedView >
-				<TouchableOpacity  onPress={() => openModal("folder")}>
+			<ThemedView style={styles.actionButtonsContainer}>
+				<TouchableOpacity style={[styles.actionButton, styles.folderButton]} onPress={() => openModal("folder")}>
 					<Ionicons name="folder-outline" size={24} color="#fff" />
-					<ThemedText type="body">Нова папка</ThemedText>
+					<ThemedText type="body" style={styles.actionButtonText}>Нова папка</ThemedText>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => openModal("file")}>
+				<TouchableOpacity style={[styles.actionButton, styles.fileButton]} onPress={() => openModal("file")}>
 					<Ionicons name="document-outline" size={24} color="#fff" />
-					<ThemedText type="body">Новий файл</ThemedText>
+					<ThemedText type="body" style={styles.actionButtonText}>Новий файл</ThemedText>
 				</TouchableOpacity>
 			</ThemedView>
 
@@ -257,26 +258,26 @@ export default function FolderScreen() {
 				visible={modalVisible}
 				onRequestClose={() => setModalVisible(false)}
 			>
-				<ThemedView >
-					<ThemedView >
-						<ThemedText type="title" >
+				<ThemedView style={styles.modalOverlay}>
+					<ThemedView style={styles.modalContent}>
+						<ThemedText type="title" style={styles.modalTitle}>
 							{itemType === "folder" ? "Створити папку" : "Створити файл"}
 						</ThemedText>
 
-						<ThemedText type="body" >
+						<ThemedText type="body" style={styles.inputLabel}>
 							{itemType === "folder" ? "Назва папки:" : "Назва файлу:"}
 						</ThemedText>
 						<TextInput
-							
+							style={styles.textInput}
 							value={itemName}
 							onChangeText={setItemName}
 							placeholder="Введіть назву"
 						/>
 						{itemType === "file" && (
 							<>
-								<ThemedText type="body" >Вміст файлу:</ThemedText>
+								<ThemedText type="body" style={styles.inputLabel}>Вміст файлу:</ThemedText>
 								<TextInput
-									
+									style={[styles.textInput, { height: 100 }]}
 									value={fileContent}
 									onChangeText={setFileContent}
 									multiline
@@ -284,12 +285,12 @@ export default function FolderScreen() {
 							</>
 						)}
 
-						<TouchableOpacity  onPress={createItem}>
-							<ThemedText type="body" >Створити</ThemedText>
+						<TouchableOpacity style={styles.modalButton} onPress={createItem}>
+							<ThemedText type="body" style={styles.modalButtonText}>Створити</ThemedText>
 						</TouchableOpacity>
 
 						<TouchableOpacity style={styles.modalCancelButton} onPress={() => setModalVisible(false)}>
-							<ThemedText type="body" >Скасувати</ThemedText>
+							<ThemedText type="body" style={styles.modalCancelText}>Скасувати</ThemedText>
 						</TouchableOpacity>
 					</ThemedView>
 				</ThemedView>

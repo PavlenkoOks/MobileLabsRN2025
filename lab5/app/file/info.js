@@ -1,34 +1,35 @@
 import React from "react"
-import { View, Text } from "react-native"
+import { View, Text, StyleSheet } from "react-native"
 import { useLocalSearchParams } from "expo-router"
 import { formatBytes, formatDate } from "../utils/fileHelper"
+import styles from "../../assets/styles/styles"
 
 export default function FileInfoScreen() {
   const { fileName, fileSize, fileModified, isDirectory } = useLocalSearchParams()
 
   return (
-    <View >
-      <View >
-        <View >
-          <Text >Назва:</Text>
-          <Text >{fileName}</Text>
+    <View style={styles.container}>
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Назва:</Text>
+          <Text style={styles.value}>{fileName}</Text>
         </View>
 
-        <View >
-          <Text >Тип:</Text>
-          <Text >{isDirectory === "1" ? "Папка" : "Файл"}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Тип:</Text>
+          <Text style={styles.value}>{isDirectory === "1" ? "Папка" : "Файл"}</Text>
         </View>
 
         {isDirectory !== "1" && (
-          <View >
-            <Text >Розмір:</Text>
-            <Text >{formatBytes(parseInt(fileSize))}</Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Розмір:</Text>
+            <Text style={styles.value}>{formatBytes(parseInt(fileSize))}</Text>
           </View>
         )}
 
-        <View >
-          <Text >Остання зміна:</Text>
-          <Text >{formatDate(parseInt(fileModified))}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Остання зміна:</Text>
+          <Text style={styles.value}>{formatDate(parseInt(fileModified))}</Text>
         </View>
       </View>
     </View>

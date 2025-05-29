@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import * as FileSystem from "expo-file-system"
 import { useLocalSearchParams, router } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
+import styles from "../../assets/styles/styles"
 
 export default function FileViewScreen() {
   const { filePath, fileName } = useLocalSearchParams()
@@ -37,19 +38,19 @@ export default function FileViewScreen() {
   }
 
   return (
-    <View >
-      <View >
-        <Text >{fileName}</Text>
-        <TouchableOpacity onPress={handleEdit}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.fileName}>{fileName}</Text>
+        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
           <Ionicons name="create-outline" size={24} color="#2196F3" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView>
+      <ScrollView style={styles.contentContainer}>
         {loading ? (
-          <Text >Завантаження...</Text>
+          <Text style={styles.loadingText}>Завантаження...</Text>
         ) : (
-          <Text >{content}</Text>
+          <Text style={styles.content}>{content}</Text>
         )}
       </ScrollView>
     </View>

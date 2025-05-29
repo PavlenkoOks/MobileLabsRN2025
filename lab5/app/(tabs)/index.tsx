@@ -4,6 +4,7 @@ import { ThemedView } from '../../components/ThemedView';
 import { useState, useEffect } from 'react';
 import * as FileSystem from 'expo-file-system';
 import { formatBytes, formatDate } from '../utils/fileHelper';
+import styles from "../../assets/styles/styles"
 
 export default function HomeScreen() {
 	const [storageInfo, setStorageInfo] = useState({
@@ -33,29 +34,29 @@ export default function HomeScreen() {
 	};
 
 	return (
-		<ScrollView >
-			<ThemedView >
+		<ScrollView style={styles.container}>
+			<ThemedView style={styles.content}>
 				<ThemedText type="title">Павленко Оксана ІПЗ-21-5 Файловий менеджер</ThemedText>
 
-				<ThemedView >
+				<ThemedView style={styles.infoContainer}>
 					<ThemedText type="title">Інформація про сховище</ThemedText>
 					
-					<ThemedView >
+					<ThemedView style={styles.infoRow}>
 						<ThemedText type="body">Загальний обсяг:</ThemedText>
 						<ThemedText type="body" style={{ fontWeight: '500' }}>{formatBytes(storageInfo.totalSpace)}</ThemedText>
 					</ThemedView>
 
-					<ThemedView >
+					<ThemedView style={styles.infoRow}>
 						<ThemedText type="body">Вільний простір:</ThemedText>
 						<ThemedText type="body" style={{ fontWeight: '500' }}>{formatBytes(storageInfo.freeSpace)}</ThemedText>
 					</ThemedView>
 
-					<ThemedView >
+					<ThemedView style={styles.infoRow}>
 						<ThemedText type="body">Зайнятий простір:</ThemedText>
 						<ThemedText type="body" style={{ fontWeight: '500' }}>{formatBytes(storageInfo.usedSpace)}</ThemedText>
 					</ThemedView>
 
-					<ThemedView>
+					<ThemedView style={styles.progressBarContainer}>
 						<ThemedView 
 							style={[
 								{ width: `${(storageInfo.usedSpace / storageInfo.totalSpace) * 100}%` }

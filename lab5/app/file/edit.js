@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react"
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native"
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native"
 import * as FileSystem from "expo-file-system"
 import { useLocalSearchParams, router } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
+import styles from "../../assets/styles/styles"
 
 export default function FileEditScreen() {
   const { filePath, fileName } = useLocalSearchParams()
@@ -42,19 +43,19 @@ export default function FileEditScreen() {
   }
 
   return (
-    <View >
-      <View >
-        <Text >{fileName}</Text>
-        <TouchableOpacity  onPress={handleSave}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.fileName}>{fileName}</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Ionicons name="save-outline" size={24} color="#4CAF50" />
         </TouchableOpacity>
       </View>
 
       {loading ? (
-        <Text >Завантаження...</Text>
+        <Text style={styles.loadingText}>Завантаження...</Text>
       ) : (
         <TextInput
-          
+          style={styles.editor}
           value={content}
           onChangeText={setContent}
           multiline
